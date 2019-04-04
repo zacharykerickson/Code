@@ -1,6 +1,10 @@
+NB Github markdown does not seem to natively support equations. That's why they look weird. \[TODO: Fix this\]
+
+
 # PWP model
 
 File: PWP.py
+
 Usage: PWP_tests.ipynb
 
 This is code for the PWP ocean mixed layer model (Price, Weller, and Pinkel, 1986). The main function is model_timestep, which takes the following inputs:

@@ -119,7 +119,7 @@ def model_timestep(T,S,U,V,z,I,L,E,P,tau_x,tau_y,dt,nabla_b=None,Ekman_Q_flux=No
         dVdt[1:-1] = np.diff(np.diff(V))/dz**2
         V += vert_diffusivity*dSdt*dt
         
-        if tracers is not None:
+        if tracer is not None:
             dtdt = np.zeros(shape=tracer.shape)
             dtdt[:,1:-1] = np.diff(np.diff(tracer,axis=0),axis=0)/dz**2
             tracer += vert_diffusivity*dtdt*dt

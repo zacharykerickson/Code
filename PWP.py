@@ -78,7 +78,7 @@ def model_timestep(T,S,U,V,z,I,L,E,P,tau_x,tau_y,dt,nabla_b=None,Ekman_Q_flux=No
             T[half_mld_ind:zstar_ind] = np.mean(T[half_mld_ind:zstar_ind])
             S[half_mld_ind:zstar_ind] = np.mean(S[half_mld_ind:zstar_ind])
             if tracer is not None:
-                tracer[:,half_mld_ind:zstar_ind] = np.mean(tracer[:,half_mld_ind:zstar_ind],axis=1)
+                tracer[:,half_mld_ind:zstar_ind] = np.atleast_2d(np.mean(tracer[:,half_mld_ind:zstar_ind],axis=1)).T
         elif verbose:
             print('No need to homogenize base of previous mixed layer')
         
@@ -121,7 +121,7 @@ def model_timestep(T,S,U,V,z,I,L,E,P,tau_x,tau_y,dt,nabla_b=None,Ekman_Q_flux=No
         
         if tracer is not None:
             dtdt = np.zeros(shape=tracer.shape)
-            dtdt[:,1:-1] = np.diff(np.diff(tracer,axis=0),axis=0)/dz**2
+            dtdt[:,1:-1] = np.diff(np.diff(tracer,axis=1),axis=1)/dz**2
             tracer += vert_diffusivity*dtdt*dt
         
         
@@ -188,7 +188,7 @@ def static_stability(T,S,U,V,z,T0,S0,rho0,alpha,beta,tracer=None,verbose=False):
     T[0:mld_ind] = np.mean(T[0:mld_ind]); S[0:mld_ind] = np.mean(S[0:mld_ind]); 
     U[0:mld_ind] = np.mean(U[0:mld_ind]); V[0:mld_ind] = np.mean(V[0:mld_ind]);
     if tracer is not None:
-        tracer[:,0:mld_ind] = np.mean(tracer[:,0:mld_ind],axis=1);
+        tracer[:,0:mld_ind] = np.atleast_2d(np.mean(tracer[:,0:mld_ind],axis=1)).T;
     rho = get_rho(T,S,T0,S0,rho0,alpha,beta)
     while np.any(np.diff(rho)<0):
         if verbose:
@@ -197,7 +197,7 @@ def static_stability(T,S,U,V,z,T0,S0,rho0,alpha,beta,tracer=None,verbose=False):
         T[0:mld_ind] = np.mean(T[0:mld_ind]); S[0:mld_ind] = np.mean(S[0:mld_ind]); 
         U[0:mld_ind] = np.mean(U[0:mld_ind]); V[0:mld_ind] = np.mean(V[0:mld_ind]);
         if tracer is not None:
-            tracer[0:mld_ind] = np.mean(tracer[0:mld_ind]);
+            tracer[:,0:mld_ind] = np.atleast_2d(np.mean(tracer[:,0:mld_ind],axis=1)).T;
         rho = get_rho(T,S,T0,S0,rho0,alpha,beta)
     return T,S,U,V,tracer
 
@@ -218,7 +218,7 @@ def mixed_layer_stability(T,S,U,V,z,T0,S0,rho0,alpha,beta,tracer=None,verbose=Fa
         U[0:j+1] = np.mean(U[0:j+1]); V[0:j+1] = np.mean(V[0:j+1]); 
         T[0:j+1] = np.mean(T[0:j+1]); S[0:j+1] = np.mean(S[0:j+1]);
         if tracer is not None:
-            tracer[:,0:j+1] = np.mean(tracer[:,0:j+1],axis=1);
+            tracer[:,0:j+1] = np.atleast_2d(np.mean(tracer[:,0:j+1],axis=1)).T;
         rho = get_rho(T,S,T0,S0,rho0,alpha,beta)
         h = get_mld(T,S,U,V,z)
         Rb = calculate_Rb(rho,h,U,V,z,rho0)

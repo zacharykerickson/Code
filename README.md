@@ -1,5 +1,6 @@
 NB Github markdown does not seem to natively support equations. That's why they look weird. \[TODO: Fix this\]
 
+NB2: Github does a really bad job loading .ipynb files sometimes. If you have issues, go to: https://nbviewer.jupyter.org/ and paste in the URL for the Github .ipynb file.
 
 # PWP model
 

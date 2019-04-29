@@ -241,6 +241,7 @@ def shear_stability(T,S,U,V,z,T0,S0,rho0,alpha,beta,tracer=None,verbose=False,N_
         print('Rg: %.2f'%Rg[ind])
     h = get_mld(T,S,U,V,z)
     counter = 0
+    minimum_Rg = Rg[ind]
     while np.round(Rg[ind],4)<0.25:
         U[ind],U[ind+1] = U[ind]-(1-Rg[ind]/Rgprime)*(U[ind]-U[ind+1])/2,U[ind+1]+(1-Rg[ind]/Rgprime)*(U[ind]-U[ind+1])/2
         V[ind],V[ind+1] = V[ind]-(1-Rg[ind]/Rgprime)*(V[ind]-V[ind+1])/2,V[ind+1]+(1-Rg[ind]/Rgprime)*(V[ind]-V[ind+1])/2
@@ -249,6 +250,7 @@ def shear_stability(T,S,U,V,z,T0,S0,rho0,alpha,beta,tracer=None,verbose=False,N_
         if tracer is not None:
             tracer[:,ind],tracer[:,ind+1] = tracer[:,ind]-(1-Rg[ind]/Rgprime)*(tracer[:,ind]-tracer[:,ind+1])/2,tracer[:,ind+1]+(1-Rg[ind]/Rgprime)*(tracer[:,ind]-tracer[:,ind+1])/2
         rho = get_rho(T,S,T0,S0,rho0,alpha,beta)
+        h = get_mld(T,S,U,V,z)
         Rg = calculate_Rg(rho,h,U,V,z,rho0)
         ind = np.nanargmin(Rg)
         if verbose:
@@ -258,6 +260,7 @@ def shear_stability(T,S,U,V,z,T0,S0,rho0,alpha,beta,tracer=None,verbose=False,N_
         if counter>N_THRESHOLD:
             warnings.warn('Could not resolve shear instability (n>%d)'%N_THRESHOLD)
             break;
+        minimum_Rg = Rg[ind]
     return T,S,U,V,tracer
 
 # calculate bulk Richardson number    
@@ -271,5 +274,5 @@ def calculate_Rb(rho,h,U,V,z,rho0):
 def calculate_Rg(rho,h,U,V,z,rho0):
     g = 9.81 # gravitational acceleration (m s^-2)
     Rg = g*np.diff(rho)*np.diff(z)/rho0/(np.diff(U)**2+np.diff(V)**2)
-    Rg[z[0:-1]+np.diff(z)/2<h] = .25 # disregard these
+    Rg[z[0:-1]+np.diff(z)/2<h-1] = .25 # disregard these
     return Rg
